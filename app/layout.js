@@ -2,7 +2,7 @@
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from './lib/registry'
-import { SearchProvider } from "./context/SearchContext";
+import { SearchProvider } from "../app/context/SearchContext";
 
 const roboto = Roboto({ subsets: ["latin"], weight:["400"] });
 

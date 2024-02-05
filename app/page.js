@@ -2,60 +2,69 @@
 import React, {useState, useEffect, useCallback} from "react";
 import MovieList from "../components/MovieList";
 import SearchBar from "../components/SearchBar";
-
+import { useSearch } from "../app/context/SearchContext";
 
 
 export default function Home() {
-  const [movies, setMovies]=useState([]);
+   const { searchResults, setSearchResults } = useSearch();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isSearchResults, setIsSearchResults] = useState(false);
 
-  const getMovies = useCallback(async (query) => {
-      const response = await fetch(`/api/movies`);
+  const getMovies = useCallback(async (query='', page=1) => {
+    console.log('query', query)
+    try {
+      const endpoint = query ? `/api/movies/search?query=${query}&page=${page}` : `/api/movies?page=${page}`;
+      const response = await fetch(endpoint, {cache:'no-store'});
       const result = await response.json();
           
-      setMovies(result.results);
-      setCurrentPage(result.page);
+      setSearchResults(query ? [{ query, results: result.results }] : [result.results])
+      setCurrentPage(page);
       setTotalPages(result.total_pages);
-      setIsSearchResults(false);
-  }, [setMovies, setCurrentPage, setTotalPages, setIsSearchResults])
+      setIsSearchResults(!!query);
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+    }
+  }, [setSearchResults, setCurrentPage, setTotalPages, setIsSearchResults])
 
-  useEffect(()=>{
-    getMovies();
-  },[]);
 
   async function handlePageChange(newPage) {
     if (newPage >= 1 && newPage <= totalPages) {
-      const response = await fetch(`/api/movies?page=${newPage}`);
-      const result = await response.json();
-
-      getMovies(result.results);
-      setCurrentPage(newPage);
-      setIsSearchResults(false);
+      const query = searchResults.length > 0 ? searchResults.query : ''; 
+      await getMovies(query, newPage);
     }
   };
 
-  const handleSearchResults = (results) => {
-    setMovies(results);
-    setIsSearchResults(true);
-  };
-
+  useEffect(() => {
+    getMovies('', currentPage);
+  }, [currentPage, getMovies]);
+ 
   return(
     <div>
        
-           <SearchBar getSearchResults={handleSearchResults} />
+           <SearchBar onSearch={setSearchResults} />
             {isSearchResults ? (
-            <h2>Your search results</h2>
+              <>
+                <h2>Your search results</h2>
+                <MovieList
+                movies={searchResults}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                />
+            </>
             ) : (
-            <h2>Top results for your search</h2>
+              <>
+                <h2>Top results for your search</h2>
+                <MovieList
+                    movies={searchResults.length > 0 ? searchResults[0] : ["Opppss"]}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    />
+               </>
             )}
-          <MovieList
-              movies={movies}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+        
      
    </div>
   )

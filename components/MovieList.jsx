@@ -96,8 +96,8 @@ const PaginationButton = styled.button`
 
 const MovieItem = styled.li`
   list-style: none;
-  width: 300px;
-  height: 400px;
+  width: 320px;
+  height: 420px;
   padding: 20px;
   margin: 20px;
   background-color: #f1f1f2;
@@ -128,8 +128,9 @@ const MovieItem = styled.li`
   }
 
   h3{
-    margin-top: 15px;
-    white-space:nowrap;;
+    text-align: center;
+    height:30px;
+    margin: 15px 0;
   }
    img{
     border-radius: 15px;
