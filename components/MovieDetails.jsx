@@ -1,18 +1,14 @@
 import styled from 'styled-components';
 
-
-
 export default function MovieDetails({ movie }) {
   return (
     <MovieDetailsContainer>
       <h2>{movie.original_title}</h2>
-  
       <MovieImage
         src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
         alt={movie.original_title}
         />
       <h3>Rate: {movie.vote_average}</h3>
- 
       <p>{movie.overview}</p>
     </MovieDetailsContainer>
   );
@@ -53,9 +49,3 @@ const MovieImage = styled.img`
   display:block;
   overflow: hidden;
 `;
-
-
-
-
-
-

@@ -3,23 +3,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function MovieList({ movies, currentPage, totalPages, onPageChange }) {
-  console.log('movies', movies)
-  return (
+   return (
     <MovieListContainer>
       <ul>
         {movies.map(movie => (
-          
           <MovieItem key={movie.id}>
             <Link href={`/movies/${movie.id}`}>
-                <Image
-                  src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                  alt={movie.original_title}
-                  width={220}
-                  height={300}
-                />
-                <h3>{movie.original_title}</h3>
-                <p>Rate: {movie.vote_average}</p>
-           
+              <Image
+                src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+                alt={movie.original_title}
+                width={220}
+                height={300}
+              />
+              <h3>{movie.original_title}</h3>
+              <p>Rate: {movie.vote_average}</p>
             </Link>
           </MovieItem>
         ))}
@@ -35,8 +32,7 @@ export default function MovieList({ movies, currentPage, totalPages, onPageChang
           </PaginationButton>
         </div>
       </PaginationContainer>
-
-    </MovieListContainer>
+     </MovieListContainer>
   );
 }
 
@@ -135,13 +131,9 @@ const MovieItem = styled.li`
     margin: 15px 0;
     overflow: hidden;
   }
+  
    img{
     border-radius: 15px;
     box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.3);
    }
-
-
 `;
-
-
-

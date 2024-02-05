@@ -7,76 +7,85 @@ import { useSearch } from "../app/context/SearchContext";
 
 
 export default function Home() {
-   const { searchResults, setSearchResults } = useSearch();
+  const { searchResults, setSearchResults } = useSearch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isSearchResults, setIsSearchResults] = useState(false);
+  const [ query, setQuery ] = useState('')
   const [isLoading, setIsLoading] = useState(true);
+
+  const cacheByQuery = searchResults[query];
+  const maxPage = !!cacheByQuery ? cacheByQuery.maxPage : 1;
+  const result = (!!cacheByQuery && cacheByQuery.data[currentPage])
+      ? cacheByQuery.data[currentPage]
+      : [];
 
   const getMovies = useCallback(async (query='', page=1) => {
     setIsLoading(true); 
 
     try {
-      const endpoint = query ? `/api/movies/search?query=${query}&page=${page}` : `/api/movies?page=${page}`;
-      const response = await fetch(endpoint);
-      const result = await response.json();
+      const localCacheByQuery = searchResults[query];
+      const havePageInCache = !localCacheByQuery || !localCacheByQuery.data[page];
+      
+      if(havePageInCache){
+        const endpoint = query ? `/api/movies/search?query=${query}&page=${page}` : `/api/movies?page=${page}`;
+        const response = await fetch(endpoint);
+        const result = await response.json();
+        const cacheItemForUpdate = !!localCacheByQuery ? localCacheByQuery : { data: {},  maxPage: null }
+        const updateCacheItem = {
+          ...cacheItemForUpdate,
+          maxPage: result.total_pages,
+          data: {
+            ...cacheItemForUpdate.data,
+            [page]: result.results
+          }
+      }      
           
-      setSearchResults(query ? [{ query, results: result.results }] : [result.results])
-      setCurrentPage(page);
-      setTotalPages(result.total_pages);
-      setIsSearchResults(!!query);
+      setSearchResults({
+        ...searchResults,
+        [query]: updateCacheItem
+      });
+    }
+
+      setQuery(query);
+      setCurrentPage(page)
+     
     } catch (error) {
       console.error('Error fetching movies:', error);
-   } finally {
+    } finally {
       setIsLoading(false);
-    
     }
-  }, [setSearchResults, setCurrentPage, setTotalPages, setIsSearchResults, setIsLoading])
+  }, [searchResults, setSearchResults, setCurrentPage, setIsLoading])
 
-  async function handlePageChange(newPage) {
-    if (newPage >= 1 && newPage <= totalPages) {
-      const query = searchResults.length > 0 ? searchResults.query : ''; 
-      await getMovies(query, newPage);
+  const handlePageChange = async (newPage) => {
+    if (newPage >= 1 && newPage <= maxPage) {
+        await getMovies(query, newPage);
     }
   };
 
   useEffect(() => {
-    getMovies('', currentPage);
-  }, [currentPage, getMovies]);
-  console.log('searchResults0', searchResults[0])
-  console.log('searchResults1', searchResults)
+    getMovies('', 1);
+  }, []);
+
 
   return(
     <div>
-       
-           <SearchBar onSearch={setSearchResults} />
-           {isLoading ? (
-              <Loader /> // Render loader when isLoading is true
+        <SearchBar getMovies={getMovies} />
+          {isLoading ? (
+            <Loader /> 
             ) : (
-              <>
-            {isSearchResults ? (
-              <>
-                <h2>Top results for your search</h2>
-                <MovieList
-                movies={searchResults[0]}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                />
-            </>
+            <>
+            {!!query?.length ? (
+              <h2>Your search results</h2>
             ) : (
-              <>
-                <h2>Your search results</h2>
-                <MovieList
-                    movies={searchResults.length > 0 ? searchResults[0] : ["Opppss"]}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    />
-               </>
+               <h2>Top results for your search</h2>
             )}
-        </>
-      )}
+            <MovieList
+              movies={result}
+              currentPage={currentPage}
+              totalPages={maxPage}
+              onPageChange={handlePageChange}
+            />
+           </>
+         )}
    </div>
   )
 };
