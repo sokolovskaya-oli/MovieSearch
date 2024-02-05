@@ -5,35 +5,38 @@ import { useSearch } from '../app/context/SearchContext';
 export default function SearchBar({ results}) {
   const { searchResults, setSearchResults } = useSearch();
   const [query, setQuery] = useState('');
-
+console.log('searchResultsSearch',searchResults)
   const handleSearch = async (e) => {
     e.preventDefault();
-    console.log('Current query:', query);
-
-    const isCached = searchResults[0].some((movie) =>
-    movie.original_title.toLowerCase().includes(query.toLowerCase())
+   
+    if (query.trim() === '') {
+      return;
+    }
+  const cachedResults = searchResults[0];
+  const filteredResults = cachedResults.filter(
+    (movie) => movie.original_title.toLowerCase().includes(query.toLowerCase())
   );
-console.log('Cached Results:', isCached);
-if (isCached) {
-  // If any movie in the results matches the query, use cached results
-  setSearchResults(searchResults[0]);
-  
-  console.log('searchResults:', searchResults);
-} else {
-  try {
-    const response = await fetch(`/api/movies/search?query=${query}`);
-    const movies = await response.json();
 
-    // Add the new search results to the existing ones
-    setSearchResults([...searchResults[0], ...movies.results]);
-  } catch (error) {
-    console.error('Error fetching search results:', error);
+  // const isCached = searchResults[0].some((movie) =>
+  //   movie.original_title.toLowerCase().includes(query.toLowerCase())
+  // );
+    
+    if (filteredResults.length > 0) {
+       setSearchResults([filteredResults]);
+   
+    console.log('searchResults:', searchResults);
+  } else {
+    try {
+      const response = await fetch(`/api/movies/search?query=${query}`);
+      const movies = await response.json();
+
+      setSearchResults( [movies.results] );
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
   }
-}
 };
-
-
-
+console.log('searchResultsSearch2',searchResults)
   return (
     <SearchBarContainer>
       <SearchForm onSubmit={handleSearch}>

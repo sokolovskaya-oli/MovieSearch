@@ -12,21 +12,20 @@ export default function Home() {
   const [isSearchResults, setIsSearchResults] = useState(false);
 
   const getMovies = useCallback(async (query='', page=1) => {
-    console.log('query', query)
+    
     try {
       const endpoint = query ? `/api/movies/search?query=${query}&page=${page}` : `/api/movies?page=${page}`;
-      const response = await fetch(endpoint, {cache:'no-store'});
+      const response = await fetch(endpoint);
       const result = await response.json();
           
       setSearchResults(query ? [{ query, results: result.results }] : [result.results])
       setCurrentPage(page);
       setTotalPages(result.total_pages);
-      setIsSearchResults(!!query);
+      setIsSearchResults(!query);
     } catch (error) {
       console.error('Error fetching movies:', error);
     }
   }, [setSearchResults, setCurrentPage, setTotalPages, setIsSearchResults])
-
 
   async function handlePageChange(newPage) {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -38,16 +37,16 @@ export default function Home() {
   useEffect(() => {
     getMovies('', currentPage);
   }, [currentPage, getMovies]);
- 
+  console.log('searchResults', searchResults[0])
   return(
     <div>
        
            <SearchBar onSearch={setSearchResults} />
             {isSearchResults ? (
               <>
-                <h2>Your search results</h2>
+                <h2>Top results for your search</h2>
                 <MovieList
-                movies={searchResults}
+                movies={searchResults[0]}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
@@ -55,9 +54,9 @@ export default function Home() {
             </>
             ) : (
               <>
-                <h2>Top results for your search</h2>
+                <h2>Your search results</h2>
                 <MovieList
-                    movies={searchResults.length > 0 ? searchResults[0] : ["Opppss"]}
+                    movies={searchResults.length > 0 ? searchResult : ["Opppss"]}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}

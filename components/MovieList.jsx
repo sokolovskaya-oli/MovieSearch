@@ -3,10 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function MovieList({ movies, currentPage, totalPages, onPageChange }) {
+  console.log('movies', movies)
   return (
     <MovieListContainer>
       <ul>
         {movies.map(movie => (
+          
           <MovieItem key={movie.id}>
             <Link href={`/movies/${movie.id}`}>
                 <Image
@@ -129,8 +131,9 @@ const MovieItem = styled.li`
 
   h3{
     text-align: center;
-    height:30px;
+    height:25px;
     margin: 15px 0;
+    overflow: hidden;
   }
    img{
     border-radius: 15px;
