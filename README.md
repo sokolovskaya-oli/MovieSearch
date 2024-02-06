@@ -16,3 +16,5 @@ bun dev
 
 Open (http://localhost:3000) with your browser to see the result.
 
+link for app :
+https://movie-search-mu-wheat.vercel.app/
