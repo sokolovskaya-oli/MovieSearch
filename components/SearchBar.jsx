@@ -1,30 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSearch } from '../app/context/SearchContext';
-
-const cache = {
-  "light": {
-    [1]: [{}, {}, {}, {}],
-    [2]: [{}, {}, {}],
-  },
-}
-
-const getMovie = async (query, page) => {
-  const cacheByQuery = cache[query];
-  if (cacheByQuery && cacheByQuery[page]) return cacheByQuery[page];
-
-  const res = await new Promise(async (res) => {
-  const response = await fetch(`/api/movies/search?query=${query}`);
-  const movies = await response.json();
-  res(movies)
-})
-  if (!!cache[query]) cache[query] = {};
-  cache[query][page] = res;
-  return res;
-}
 
 export default function SearchBar({ getMovies }) {
-  // const { searchResults, setSearchResults } = useSearch();
   const [query, setQuery] = useState('');
   const handleSearch = async (e) => {
     e.preventDefault();

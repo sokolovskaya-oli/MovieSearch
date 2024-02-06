@@ -1,11 +1,17 @@
 "use client"
 import { createContext, useContext, useState } from "react";
 
-const SearchContext = createContext();
+let saveValue = {};
+const SearchContext = createContext(saveValue);
 
 export const SearchProvider = ({ children }) => {
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResultsInternal] = useState({});
 
+  const setSearchResults = (val) => {
+    saveValue = val
+    setSearchResultsInternal(val);
+  }
+  
   return (
     <SearchContext.Provider value={{ searchResults, setSearchResults }}>
       {children}

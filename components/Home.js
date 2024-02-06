@@ -1,9 +1,9 @@
 'use client'
 import React, {useState, useEffect, useCallback} from "react";
-import MovieList from "../components/MovieList";
-import SearchBar from "../components/SearchBar";
-import Loader from "../components/Loader";
-import { useSearch } from "../app/context/SearchContext";
+import MovieList from "./MovieList";
+import SearchBar from "./SearchBar";
+import Loader from "./Loader";
+import { useSearch } from "../context/SearchContext";
 
 
 export default function Home() {

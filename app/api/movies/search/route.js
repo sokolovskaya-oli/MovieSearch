@@ -1,23 +1,11 @@
 import { NextResponse } from "next/server";
-
-const API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzOWU2MTE0MjJlZTc5MjYyZTRkNzIxNDJkM2I4NmRlYSIsInN1YiI6IjY1YmNhMTIzMmQxZTQwMDE4NDVkNzkxZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MNDWzDog5Vj5irJpOcDKJxcx4v-OyxVQ4Dt0-NgvYRE";
-
-const fetchFromApi = (url) => {
-    return fetch(url, {
-    method: 'GET',
-    headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${API_KEY}`
-    }
-  })
-    
-}
+import { fetchFromApi } from "../../common";
 
 async function fetchMovies(query, page = 1) {
   try {
-  const response = await fetchFromApi(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=${page}`)
-  const movies = await response.json()
-  return movies
+    const response = await fetchFromApi(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=${page}`)
+    const movies = await response.json()
+    return movies
   } catch (error) {
     console.error('Error fetching movies:', error);
     throw error; 

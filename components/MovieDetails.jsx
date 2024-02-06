@@ -23,7 +23,8 @@ const MovieDetailsContainer = styled.div`
   margin: 0 auto;
   background-color: #f1f1f2;
   border-radius:30px;
-
+  margin-top:20px;
+  
   h2{
     font-size: 24px;
     margin-bottom: 10px;
