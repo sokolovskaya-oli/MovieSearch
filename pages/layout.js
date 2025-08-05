@@ -1,9 +1,10 @@
-import StyledComponentsRegistry from '../app/lib/registry';
+import { ThemeProvider } from "../app/theme/ThemeContext";
+import StyledComponentsRegistry from "../app/lib/registry";
 
 export default function RootLayout({ children }) {
   return (
-     <StyledComponentsRegistry>
-        {children}
-     </StyledComponentsRegistry>
+    <StyledComponentsRegistry>
+      <ThemeProvider> {children}</ThemeProvider>
+    </StyledComponentsRegistry>
   );
 }
