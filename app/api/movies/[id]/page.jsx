@@ -1,5 +1,5 @@
-import { fetchFromApi } from "@/app/common";
-import MovieDetails from "@/components/MovieDetails";
+import MovieDetails from "../../../../components/MovieDetails";
+import { fetchFromApi } from "../../common";
 
 export async function generateMetadata({ params }) {
   return {
