@@ -1,15 +1,9 @@
 import styled from "styled-components";
 
-import Link from "next/link";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import MovieItem from "./MovieItem";
 
-export default function MovieList({
-  movies,
-  currentPage,
-  totalPages,
-  onPageChange,
-}) {
+function MovieList({ movies, currentPage, totalPages, onPageChange }) {
   const movieItem = useMemo(() => {
     return movies.map((movie) => <MovieItem key={movie.id} movie={movie} />);
   }, [movies]);
@@ -39,6 +33,7 @@ export default function MovieList({
     </MovieListContainer>
   );
 }
+export default React.memo(MovieList);
 
 const MovieListContainer = styled.div`
   width: 80%;
@@ -92,8 +87,7 @@ const PaginationButton = styled.button`
 `;
 
 const MovieItems = styled.ul`
-  display: grid;
-  grid-template-columns: (1fr, 1fr);
+  display: flex;
   list-style: none;
   margin: 20px;
   cursor: pointer;

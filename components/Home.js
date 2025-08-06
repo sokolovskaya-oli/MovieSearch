@@ -6,6 +6,7 @@ import Loader from "./Loader";
 import { useSearch } from "../context/SearchContext";
 import styled from "styled-components";
 import ThemeToggleButton from "../app/theme/ThemeToggleButton";
+import Link from "next/link";
 
 export default function Home() {
   const { searchResults, setSearchResults } = useSearch();
@@ -64,11 +65,14 @@ export default function Home() {
     [searchResults, setSearchResults, setCurrentPage, setIsLoading]
   );
 
-  const handlePageChange = async (newPage) => {
-    if (newPage >= 1 && newPage <= maxPage) {
-      await getMovies(query, newPage);
-    }
-  };
+  const handlePageChange = useCallback(
+    async (newPage) => {
+      if (newPage >= 1 && newPage <= maxPage) {
+        await getMovies(query, newPage);
+      }
+    },
+    [query, maxPage, getMovies]
+  );
 
   useEffect(() => {
     getMovies("", 1);
@@ -81,8 +85,21 @@ export default function Home() {
         <Loader />
       ) : (
         <>
-          <h3>Want to change the theme?</h3>
-          <ThemeToggleButton />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <h3 style={{ color: "pink" }}>Want to change the theme?</h3>
+              <ThemeToggleButton />
+            </div>
+            <div>
+              <ContactButton href="/contact">Contact Us</ContactButton>
+            </div>
+          </div>
           {!!query?.length ? (
             <h2>Your search results</h2>
           ) : (
@@ -103,4 +120,20 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
   width: 100%;
   min-height: 100%;
+  padding: 0 20px;
+`;
+const ContactButton = styled(Link)`
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  margin: 2rem auto;
+  text-align: center;
+  background-color: #1995ad;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #005bb5;
+  }
 `;

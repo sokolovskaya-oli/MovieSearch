@@ -1,17 +1,17 @@
 import { fetchFromApi } from "@/app/common";
 import MovieDetails from "@/components/MovieDetails";
 
-export default async function MovieDetailsPage({ params }) {
-  const { id } = params;
+export async function generateMetadata({ params }) {
+  return {
+    title: `Movie | ${params.id}`,
+  };
+}
 
-  const res = await fetchFromApi(
-    `https://api.themoviedb.org/3/movie/${id}?language=en-US`
+export default async function MoviePage({ params }) {
+  const response = await fetchFromApi(
+    `https://api.themoviedb.org/3/movie/${params.id}?language=en-US`
   );
-  const movie = await res.json();
+  const movie = await response.json();
 
-  return (
-    <div>
-      <MovieDetails movie={movie} />
-    </div>
-  );
+  return <MovieDetails movie={movie} />;
 }
